@@ -1,3 +1,6 @@
+models/*.onnx
+models/*.engine
+
 engines/*.engine
 engines/*.cache*
 *.engine
