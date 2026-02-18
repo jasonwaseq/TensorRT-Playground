@@ -3,9 +3,48 @@
 ## Overview
 This project is a deep dive into high-performance inference optimization on NVIDIA Jetson Orin Nano using TensorRT. I exported a ResNet-50 model to ONNX, built optimized FP16 TensorRT engines, and systematically benchmarked inference performance under multiple execution configurations including baseline execution, CUDA Graphs, and multi-stream scheduling. Using TensorRT’s detailed timing traces, I extracted per-inference GPU compute latency and analyzed throughput, average latency, and tail latency (p90/p99) across more than 13,000 runs. The results were visualized with latency histograms and comparison plots to highlight variance reduction and performance tradeoffs introduced by different optimization techniques. This project demonstrates practical skills in embedded GPU performance engineering, model deployment, and low-level inference profiling on edge AI hardware.
 
-## Get The Model
-wget https://download.pytorch.org/models/resnet50-0676ba61.pth   
-python export_onnx.py
+## Quick Start
+You can run the entire pipeline with a single script:
+```bash
+./run_all.sh
+```
+This script will:
+1.  Export the ResNet-50 model to ONNX.
+2.  Build the TensorRT engine.
+3.  Run all benchmarks (Base, CUDA Graph, Multi-stream).
+4.  Generate latency plots.
+
+## Individual Steps
+
+### 1. Get The Model
+Export the pre-trained ResNet-50 model to ONNX:
+```bash
+python3 export_onnx.py
+```
+
+### 2. Build Engine
+Convert ONNX model to TensorRT engine (FP16):
+```bash
+./scripts/build_fp16_engine.sh
+```
+
+### 3. Run Benchmarks
+Run individual benchmarks:
+```bash
+./scripts/bench_base.sh
+./scripts/bench_cudagraph.sh
+./scripts/bench_streams.sh
+```
+
+### 4. Visualize Results
+Generate comparison plots:
+```bash
+python3 plot_compare.py
+```
+Generate individual latency histograms:
+```bash
+python3 plot_latency.py results/perf_base.json
+```
 
 ## Pipeline
 ONNX → TensorRT FP16 Engine → Benchmark (30s steady-state)
@@ -36,7 +75,7 @@ ONNX → TensorRT FP16 Engine → Benchmark (30s steady-state)
 - TensorRT timing cache significantly reduces rebuild time
 
 ## Reproducibility
-All benchmarks can be reproduced using scripts in `/scripts`.
+All benchmarks can be reproduced using scripts in `/scripts` or the master `run_all.sh`.
 
 ## Latency Analysis
 
